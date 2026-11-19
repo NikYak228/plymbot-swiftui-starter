@@ -1,0 +1,20 @@
+name: iOS simulator build
+on: [push, pull_request, workflow_dispatch]
+permissions:
+  contents: read
+concurrency:
+  group: ios-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  build:
+    runs-on: macos-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build the standalone iOS preview
+        run: >-
+          xcodebuild -project Plymbot.xcodeproj -scheme Plymbot
+          -configuration Debug -sdk iphonesimulator
+          -destination 'generic/platform=iOS Simulator'
+          -derivedDataPath /tmp/plymbot-derived
+          CODE_SIGNING_ALLOWED=NO build
